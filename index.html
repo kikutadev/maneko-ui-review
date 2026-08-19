@@ -13,7 +13,7 @@
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;max-width:100%;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Hiragino Sans","Noto Sans JP",sans-serif;color:var(--ink);background:#dcd7d0}
 button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative;width:min(430px,100%);height:min(900px,calc(100dvh - 40px));margin:20px auto;background:var(--bg);border-radius:42px;overflow:hidden;box-shadow:0 28px 80px rgba(36,33,31,.18);border:1px solid rgba(36,33,31,.06)}
 .app{height:100%;width:100%;max-width:100%;overflow:auto;overflow-x:hidden;padding:26px 20px 120px;scrollbar-width:none}.app::-webkit-scrollbar{display:none}.screen{display:none}.screen.active{display:block;animation:fade .16s ease}@keyframes fade{from{opacity:.6;transform:translateY(2px)}to{opacity:1;transform:none}}
-.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.page-head h1{font-size:30px;line-height:1.1;letter-spacing:-.9px;margin:0}.icon-btn{width:40px;height:40px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center;font-size:21px;cursor:pointer}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.page-head h1{font-size:30px;line-height:1.1;letter-spacing:-.9px;margin:0}.utility-row{display:flex;align-items:center;justify-content:flex-end;margin-bottom:8px}.search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.utility-btn{border:0;background:transparent;padding:10px 6px;font-size:13px;font-weight:820;cursor:pointer}.add-btn{border:1px solid #d8d0c8;background:var(--surface);border-radius:17px;padding:13px 15px;font-size:13px;font-weight:820;cursor:pointer}
 .focus-card{width:100%;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--shadow)}.context{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:760;color:#5f5751}.focus-title{font-size:24px;line-height:1.42;letter-spacing:-.5px;font-weight:830;margin-top:16px}.source{font-size:13px;color:var(--muted);margin-top:10px;font-weight:620}.action-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-top:22px}.primary{min-width:0;border:0;background:var(--accent);color:white;border-radius:17px;padding:15px 18px;font-weight:820;cursor:pointer}.secondary{border:1px solid #d8d0c8;background:#fff;border-radius:17px;padding:0 16px;font-weight:800;cursor:pointer}
 .section-label{font-size:13px;font-weight:800;color:var(--muted);margin:26px 2px 10px}.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px}.row{display:flex;gap:13px;align-items:center}.row.start{align-items:flex-start}.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}.grow{flex:1;min-width:0}.badge{width:38px;height:38px;border-radius:13px;background:var(--surface2);display:grid;place-items:center;flex:0 0 auto;font-size:18px}.title{font-size:17px;line-height:1.45;font-weight:800}.body{font-size:13px;line-height:1.55;color:var(--muted);margin-top:4px}.text-action{border:0;background:transparent;padding:0;margin-top:14px;font-size:13px;font-weight:820;cursor:pointer}.status{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--surface2);font-size:12px;font-weight:760;color:#5f5751}
 .search{width:100%;border:0;background:#ece8e2;border-radius:17px;padding:14px 15px;text-align:left;color:var(--muted);font-size:14px;cursor:pointer}.stack{display:flex;flex-direction:column;gap:11px}.role-card{cursor:pointer}.role-avatar{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,#e9dfd4,#d9e0d9);display:grid;place-items:center;font-weight:850;font-size:20px;flex:0 0 auto}.role-focus{font-size:14px;font-weight:760;line-height:1.5;margin-top:14px}.role-meta{font-size:12px;color:var(--muted);margin-top:3px}
@@ -26,7 +26,7 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
 <body>
 <main class="phone">
   <div class="app" id="app">
-    <section class="screen active" data-screen="today" id="today"></section>
+    <section class="screen active" data-screen="try" id="try"></section>
     <section class="screen" data-screen="models" id="models"></section>
     <section class="screen" data-screen="me" id="me"></section>
   </div>
@@ -41,7 +41,7 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
   </aside>
 
   <nav class="tabs" aria-label="メインナビゲーション">
-    <button class="tab active" data-tab="today"><i>☀︎</i><span>今日</span></button>
+    <button class="tab active" data-tab="try"><i>▶︎</i><span>試す</span></button>
     <button class="tab" data-tab="models"><i>✦</i><span>お手本</span></button>
     <button class="tab" data-tab="me"><i>◉</i><span>わたし</span></button>
   </nav>
@@ -53,7 +53,7 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
 <script>
 (() => {
   const initial = () => ({
-    tab:'today',
+    tab:'try',
     showHelp:localStorage.getItem('maneko_help_dismissed')!=='1',
     aspiration:{title:'忙しくても、重要なことから進められる人',detail:'仕事が重なると、何から手を付けるか迷う'},
     trial:{text:'仕事を始める前に、今日一番重要なことを1つ書く',context:'次に仕事を始めるとき',role:'未来の自分'},
@@ -65,23 +65,23 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
   });
   let state=initial();
   const params=new URLSearchParams(location.search);
-  if(['today','models','me'].includes(params.get('tab'))) state.tab=params.get('tab');
+  if(params.get('tab')==='today') state.tab='try';
+  else if(['try','models','me'].includes(params.get('tab'))) state.tab=params.get('tab');
   if(params.get('help')==='0') state.showHelp=false;
   const $=(q,r=document)=>r.querySelector(q), $$=(q,r=document)=>[...r.querySelectorAll(q)];
   const esc=(s='')=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const label=t=>`<div class="section-label">${esc(t)}</div>`;
-  const resultLabel=v=>({done:'できた',partial:'少しできた',skipped:'今日はしなかった',notSuitable:'合わなかった'})[v]||v;
+  const resultLabel=v=>({done:'できた',partial:'少しできた',skipped:'今回は見送った',notSuitable:'合わなかった'})[v]||v;
 
-  function renderToday(){
+  function renderTry(){
     const last=state.logs.at(-1), adapted=state.adaptations.length>0;
-    $('#today').innerHTML=`
-      <header class="page-head"><h1>今日</h1></header>
+    $('#try').innerHTML=`
       <article class="focus-card">
         <span class="context">${esc(state.trial.context)}</span>
         <div class="focus-title">${esc(state.trial.text)}</div>
         <div class="source">${esc(state.trial.role)} を参考にしています</div>
         <div class="action-row">
-          <button class="primary" data-action="record">${last?'今日の記録を見る':'試して記録する'}</button>
+          <button class="primary" data-action="record">${last?'記録を見る':'記録する'}</button>
           <button class="secondary" data-action="adapt">調整</button>
         </div>
       </article>
@@ -92,25 +92,24 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
   }
   function roleCard(r){return `<article class="card role-card" data-role="${esc(r.id)}"><div class="row"><div class="role-avatar">${esc(r.name.slice(0,1))}</div><div class="grow"><div class="title">${esc(r.name)}${r.official?' ✓':''}</div><div class="role-meta">${esc(r.kind)}</div></div><div>›</div></div><div class="role-focus">${esc(r.focus)}</div></article>`}
   function renderModels(){
-    $('#models').innerHTML=`<header class="page-head"><h1>お手本</h1><button class="icon-btn" data-action="add-role" aria-label="お手本を追加">＋</button></header><button class="search" data-action="search">⌕　お手本を探す</button>${label('参考にしている')}<div class="stack">${state.roles.map(roleCard).join('')}</div>`;
+    $('#models').innerHTML=`<div class="search-row"><button class="search" data-action="search">⌕　お手本を探す</button><button class="add-btn" data-action="add-role">追加</button></div>${label('参考にしている')}<div class="stack">${state.roles.map(roleCard).join('')}</div>`;
   }
   function renderMe(){
     $('#me').innerHTML=`
-      <header class="page-head"><h1>わたし</h1><button class="icon-btn" data-action="settings" aria-label="設定">⚙︎</button></header>
-      ${label('なりたい姿')}<article class="card"><div class="title" style="font-size:20px">${esc(state.aspiration.title)}</div><div class="body">${esc(state.aspiration.detail)}</div><button class="text-action" data-action="edit-aspiration">編集 →</button></article>
+      <div class="row-between"><div class="section-label" style="margin:0">なりたい姿</div><button class="utility-btn" data-action="settings">設定</button></div><article class="card"><div class="title" style="font-size:20px">${esc(state.aspiration.title)}</div><div class="body">${esc(state.aspiration.detail)}</div><button class="text-action" data-action="edit-aspiration">編集 →</button></article>
       ${label('いま試している')}<article class="card"><div class="row-between"><span class="status">試している</span><button class="text-action" style="margin:0" data-action="adapt">調整</button></div><div class="title" style="margin-top:10px">${esc(state.trial.text)}</div><div class="body">${esc(state.trial.role)} から始めたやり方</div></article>
       ${label('自分に合ってきたこと')}${state.adaptations.length?state.adaptations.slice().reverse().map(a=>`<article class="card row start" style="margin-bottom:10px"><div class="badge">✓</div><div class="grow"><div class="title">${esc(a.after)}</div><div class="body">${esc(a.reason||'試しながら、自分向けに変更しました。')}</div></div></article>`).join(''):`<article class="card row start"><div class="badge">◌</div><div class="body">調整した内容がここに残ります。</div></article>`}
     `;
   }
-  function render(){renderToday();renderModels();renderMe();$$('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===state.tab));$$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.tab));$('#help-card').classList.toggle('show',state.showHelp)}
+  function render(){renderTry();renderModels();renderMe();$$('.screen').forEach(x=>x.classList.toggle('active',x.dataset.screen===state.tab));$$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===state.tab));$('#help-card').classList.toggle('show',state.showHelp)}
   function setTab(tab){state.tab=tab;render();$('#app').scrollTo({top:0,behavior:'smooth'})}
   function openSheet(html){$('#sheet').innerHTML=`<div class="handle"></div>${html}`;$('#modal').classList.add('open')}
   function closeSheet(){$('#modal').classList.remove('open')}
   function toast(text){const t=$('#toast');t.textContent=text;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),1900)}
 
   function help(){openSheet(`<h2>使い方</h2><div class="stack" style="margin:18px 0 22px"><div class="row start"><div class="badge">1</div><div><div class="title">お手本から、ひとつ借りる</div><div class="body">人物全体ではなく、取り入れたい考え方や行動を選びます。</div></div></div><div class="row start"><div class="badge">2</div><div><div class="title">一度だけ試す</div><div class="body">続ける前提にせず、生活の中で自分に合うか確かめます。</div></div></div><div class="row start"><div class="badge">3</div><div><div class="title">自分の形に変える</div><div class="body">合わない部分だけ調整し、しっくりきたやり方を残します。</div></div></div></div><button class="primary" style="width:100%" data-sheet="close">わかった</button>`)}
-  function record(){const last=state.logs.at(-1);if(last){openSheet(`<h2>今日の記録</h2><div class="body">${esc(state.trial.text)}</div><div class="card" style="margin:18px 0"><div class="title">${esc(resultLabel(last.result))}</div>${last.note?`<div class="body">${esc(last.note)}</div>`:''}</div><button class="primary" style="width:100%" data-sheet="record-again">もう一度記録する</button>`);return}openRecord()}
-  function openRecord(){state.selectedResult=null;openSheet(`<h2>どうでしたか？</h2><div class="body">${esc(state.trial.text)}</div><div class="choice-wrap">${[['done','できた'],['partial','少しできた'],['skipped','今日はしなかった'],['notSuitable','合わなかった']].map(([v,l])=>`<button class="choice" data-result="${v}">${l}</button>`).join('')}</div><textarea class="field" id="note" rows="3" placeholder="ひとこと（任意）"></textarea><button class="primary" style="width:100%;opacity:.45" id="save-log" disabled data-sheet="save-log">記録する</button>`)}
+  function record(){const last=state.logs.at(-1);if(last){openSheet(`<h2>記録</h2><div class="body">${esc(state.trial.text)}</div><div class="card" style="margin:18px 0"><div class="title">${esc(resultLabel(last.result))}</div>${last.note?`<div class="body">${esc(last.note)}</div>`:''}</div><button class="primary" style="width:100%" data-sheet="record-again">もう一度記録する</button>`);return}openRecord()}
+  function openRecord(){state.selectedResult=null;openSheet(`<h2>どうでしたか？</h2><div class="body">${esc(state.trial.text)}</div><div class="choice-wrap">${[['done','できた'],['partial','少しできた'],['skipped','今回は見送った'],['notSuitable','合わなかった']].map(([v,l])=>`<button class="choice" data-result="${v}">${l}</button>`).join('')}</div><textarea class="field" id="note" rows="3" placeholder="ひとこと（任意）"></textarea><button class="primary" style="width:100%;opacity:.45" id="save-log" disabled data-sheet="save-log">記録する</button>`)}
   function adapt(){openSheet(`<h2>自分に合わせる</h2><div class="body">元の形は残ります。合わない部分だけ変えます。</div><textarea class="field" id="adapt-text" rows="4">${esc(state.trial.text)}</textarea><input class="field" id="adapt-reason" placeholder="なぜ変える？（任意）"><button class="primary" style="width:100%" data-sheet="save-adapt">この形で次に試す</button>`)}
   function search(){openSheet(`<h2>お手本を探す</h2><input class="field" autofocus placeholder="例：落ち着いて判断できる人"><div class="body">このモックでは登録済みのお手本を表示します。</div>`);setTimeout(()=>$('#sheet input')?.focus(),80)}
   function settings(){openSheet(`<h2>設定</h2><button class="sheet-row" data-sheet="help"><span class="badge">?</span><span class="grow"><b>使い方を見る</b><br><span class="body">いつでも確認できます</span></span><span>›</span></button><button class="sheet-row" data-sheet="reset"><span class="badge">↻</span><span class="grow"><b>モックを初期状態に戻す</b></span></button>`)}
@@ -128,7 +127,7 @@ button,input,textarea{font:inherit}button{color:inherit}.phone{position:relative
       return;
     }
     const result=e.target.closest('[data-result]');if(result){state.selectedResult=result.dataset.result;$$('.choice','#sheet').forEach(x=>x.classList.toggle('selected',x.dataset.result===state.selectedResult));const b=$('#save-log');b.disabled=false;b.style.opacity='1';return}
-    const d=e.target.closest('[data-detail]');if(d){if(d.dataset.detail==='back')closeRole();if(d.dataset.detail==='try'){const r=state.roles.find(x=>x.id===d.dataset.roleId);if(r){state.trial.text=r.way;state.trial.role=r.name;closeRole();setTab('today');toast('「今日」に追加しました')}}return}
+    const d=e.target.closest('[data-detail]');if(d){if(d.dataset.detail==='back')closeRole();if(d.dataset.detail==='try'){const r=state.roles.find(x=>x.id===d.dataset.roleId);if(r){state.trial.text=r.way;state.trial.role=r.name;closeRole();setTab('try');toast('「試す」に追加しました')}}return}
     const sa=e.target.closest('[data-sheet]')?.dataset.sheet;if(sa){
       if(sa==='close'){closeSheet();return}if(sa==='help'){closeSheet();setTimeout(help,70);return}if(sa==='record-again'){closeSheet();setTimeout(openRecord,70);return}
       if(sa==='save-log'){if(!state.selectedResult)return;const result=state.selectedResult,note=$('#note')?.value.trim()||'';state.logs.push({result,note,at:new Date().toISOString()});closeSheet();render();toast('記録しました');if(result==='partial'||result==='notSuitable')setTimeout(adapt,260);return}
