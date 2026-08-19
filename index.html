@@ -32,11 +32,9 @@
     .phone{position:relative;width:min(430px,100%);height:min(900px,calc(100dvh - 40px));min-height:680px;background:var(--bg);border-radius:42px;overflow:hidden;box-shadow:0 24px 70px rgba(38,35,33,.20);border:1px solid rgba(38,35,33,.08)}
     .app{height:100%;overflow:auto;padding:22px 20px 112px;scrollbar-width:none}
     .app::-webkit-scrollbar{display:none}
-    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
-    .brand{font-size:22px;font-weight:850;letter-spacing:-.7px}
-    .avatar,.icon-button{width:38px;height:38px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer}
-    .avatar{background:linear-gradient(135deg,#d8c6b5,#afa39a);color:white;font-weight:800}
-    .icon-button{background:transparent;font-size:20px}
+    .page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:7px}
+    .page-heading h1{margin:0}
+    .icon-button{width:38px;height:38px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;background:transparent;font-size:20px}
     .greeting{font-size:15px;font-weight:650;color:var(--muted);margin-bottom:5px}
     h1{font-size:31px;line-height:1.18;letter-spacing:-1px;margin:0 0 22px}
     h2{font-size:22px;line-height:1.3;letter-spacing:-.5px;margin:0}
@@ -69,6 +67,12 @@
     .strong-small{font-size:12px;font-weight:800}
     .gradient{background:linear-gradient(135deg,var(--warm),var(--green));border:0}
     .empty{color:#6e6761;line-height:1.65}
+    .usage-float{position:absolute;left:18px;right:18px;bottom:calc(var(--safe-bottom) + 82px);z-index:19;background:#fffefa;border:1px solid #ddd5cd;border-radius:22px;box-shadow:0 12px 32px rgba(38,35,33,.14);padding:14px 14px 14px 16px;display:none}
+    .usage-float.show{display:block}
+    .usage-float .usage-title{font-size:14px;font-weight:850;margin-bottom:3px}
+    .usage-float .usage-copy{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+    .usage-float .usage-link{border:0;background:transparent;padding:0;margin-top:8px;font-size:13px;font-weight:850;cursor:pointer}
+    .usage-close{width:34px;height:34px;flex:0 0 auto;border:0;border-radius:50%;background:#f0ebe5;display:grid;place-items:center;cursor:pointer;font-size:18px}
     .tabs{position:absolute;left:16px;right:16px;bottom:var(--safe-bottom);height:72px;border:1px solid #e6e0d7;border-radius:28px;background:var(--nav);backdrop-filter:blur(18px);box-shadow:0 8px 28px rgba(0,0,0,.08);display:grid;grid-template-columns:repeat(3,1fr);padding:6px;z-index:20}
     .tab{border:0;background:transparent;border-radius:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;color:#8c837c;cursor:pointer;font-size:11px;font-weight:700}
     .tab .tab-icon{font-size:18px;line-height:1}
@@ -112,6 +116,8 @@
       <section class="screen" data-screen="me" id="screen-me"></section>
     </div>
 
+    <aside class="usage-float" id="usage-card" aria-label="使い方の案内"></aside>
+
     <nav class="tabs" aria-label="メインナビゲーション">
       <button class="tab active" data-tab="today"><span class="tab-icon">☀︎</span><span>今日</span></button>
       <button class="tab" data-tab="models"><span class="tab-icon">✦</span><span>お手本</span></button>
@@ -139,6 +145,7 @@
     logs: [],
     adaptations: [],
     selectedResult: null,
+    helpVisible: localStorage.getItem('maneko-help-dismissed') !== '1',
     roleModels: [
       {
         id:'future-self', name:'未来の自分', kind:'未来の自分', official:false,
@@ -169,11 +176,10 @@
     return h < 11 ? 'おはようございます' : h < 18 ? 'こんにちは' : 'こんばんは';
   }
 
-  function topbar(settings=false){
-    return `<div class="topbar"><div class="brand">maneko</div>${settings
-      ? `<button class="icon-button" data-action="settings" aria-label="設定">⚙︎</button>`
-      : `<div class="avatar" aria-hidden="true">M</div>`}</div>`;
+  function pageHeading(title, settings=false){
+    return `<div class="page-heading"><h1>${esc(title)}</h1>${settings ? `<button class="icon-button" data-action="settings" aria-label="設定" title="設定">⚙︎</button>` : ''}</div>`;
   }
+
 
   function sectionTitle(eyebrow,title){
     return `<div class="section-title"><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(title)}</h2></div>`;
@@ -183,7 +189,6 @@
     const completed = state.logs.length > 0;
     const learned = state.adaptations.length > 0;
     $('#screen-today').innerHTML = `
-      ${topbar(false)}
       <div class="greeting">${greeting()}</div>
       <h1>${completed ? '今日も、少しだけ。' : '今日、ひとつ試してみる'}</h1>
       <article class="dark-card">
@@ -229,8 +234,7 @@
 
   function renderModels(){
     $('#screen-models').innerHTML = `
-      ${topbar(false)}
-      <h1>お手本</h1>
+      ${pageHeading('お手本')}
       <p class="lead">「${esc(state.aspiration.title)}」に近づくヒントを集めました。</p>
       <button class="search" data-action="search">⌕　人・習慣・考え方を探す</button>
       ${sectionTitle('FOR YOU','いまのあなたに合いそう')}
@@ -246,8 +250,7 @@
     const logs = state.logs.length;
     const adapts = state.adaptations.length;
     $('#screen-me').innerHTML = `
-      ${topbar(true)}
-      <h1>わたし</h1>
+      ${pageHeading('わたし', true)}
       <p class="lead">回数ではなく、自分に合ってきたものを残します。</p>
       ${sectionTitle('DIRECTION','なりたい姿')}
       <article class="card gradient">
@@ -271,8 +274,23 @@
     `;
   }
 
+
+  function renderUsageCard(){
+    const card=$('#usage-card');
+    card.classList.toggle('show', !!state.helpVisible);
+    card.innerHTML = state.helpVisible ? `
+      <div class="row" style="align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div class="usage-title">はじめて使う方へ</div>
+          <p class="usage-copy">お手本からひとつ借りて、試しながら自分に合う形へ変えていきます。</p>
+          <button class="usage-link" data-action="usage">使い方を見る →</button>
+        </div>
+        <button class="usage-close" data-action="dismiss-usage" aria-label="案内を閉じる" title="閉じる">×</button>
+      </div>` : '';
+  }
+
   function renderAll(){
-    renderToday(); renderModels(); renderMe();
+    renderToday(); renderModels(); renderMe(); renderUsageCard();
     $$('.screen').forEach(el => el.classList.toggle('active', el.dataset.screen === state.tab));
     $$('.tab').forEach(el => el.classList.toggle('active', el.dataset.tab === state.tab));
   }
@@ -345,10 +363,18 @@
     setTimeout(()=>$('#sheet input')?.focus(),80);
   }
 
+  function usageSheet(){
+    openSheet(`<h2>使い方</h2>
+      <div class="stack" style="margin-top:18px">
+        <div class="card row" style="align-items:flex-start"><div class="icon-badge">1</div><div><h3>お手本から、ひとつ借りる</h3><p class="small" style="font-size:14px;margin:4px 0 0">人そのものではなく「ここをまねしたい」を選びます。</p></div></div>
+        <div class="card row" style="align-items:flex-start"><div class="icon-badge">2</div><div><h3>一度だけ試してみる</h3><p class="small" style="font-size:14px;margin:4px 0 0">「今日」から試して、できたかどうかを短く残します。</p></div></div>
+        <div class="card row" style="align-items:flex-start"><div class="icon-badge">3</div><div><h3>自分に合わせる</h3><p class="small" style="font-size:14px;margin:4px 0 0">合わなければ、時間や量、やり方を自分向けに変えます。</p></div></div>
+      </div>`);
+  }
+
   function settingsSheet(){
     openSheet(`<h2>設定</h2>
-      <button class="settings-row"><span>◌</span><span class="grow"><b>リマインド</b></span><span>›</span></button>
-      <button class="settings-row"><span>◎</span><span class="grow"><b>言語</b><br><span class="small">日本語</span></span><span>›</span></button>
+      <button class="settings-row" data-sheet-action="usage"><span>?</span><span class="grow"><b>使い方を見る</b><br><span class="small">いつでも確認できます</span></span><span>›</span></button>
       <button class="settings-row" data-sheet-action="reset"><span>↻</span><span class="grow"><b>モックを初期状態に戻す</b></span></button>`);
   }
 
@@ -399,7 +425,7 @@
     }
     const action=e.target.closest('[data-action]')?.dataset.action;
     if(action){
-      ({'trial-detail':trialDetail,'record':recordSheet,'adapt':adaptSheet,'go-models':()=>setTab('models'),'search':searchSheet,'settings':settingsSheet,'add-role':addRoleSheet,'edit-aspiration':aspirationSheet}[action]||(()=>{}))();
+      ({'trial-detail':trialDetail,'record':recordSheet,'adapt':adaptSheet,'go-models':()=>setTab('models'),'search':searchSheet,'settings':settingsSheet,'add-role':addRoleSheet,'edit-aspiration':aspirationSheet,'usage':usageSheet,'dismiss-usage':()=>{state.helpVisible=false;localStorage.setItem('maneko-help-dismissed','1');renderUsageCard();showToast('「わたし」→ 設定 → 使い方 からいつでも見られます');}}[action]||(()=>{}))();
       return;
     }
     const result=e.target.closest('[data-result]');
@@ -412,6 +438,7 @@
     const sheetAction=e.target.closest('[data-sheet-action]')?.dataset.sheetAction;
     if(sheetAction){
       if(sheetAction==='close'){closeSheet();return;}
+      if(sheetAction==='usage'){closeSheet();setTimeout(usageSheet,80);return;}
       if(sheetAction==='record'||sheetAction==='record-again'){closeSheet();setTimeout(openRecordForm,80);return;}
       if(sheetAction==='adapt'){closeSheet();setTimeout(adaptSheet,80);return;}
       if(sheetAction==='save-practice'){
@@ -440,7 +467,7 @@
         closeSheet();renderAll();showToast('なりたい姿を更新しました');return;
       }
       if(sheetAction==='reset'){
-        state=initialState();closeSheet();closeRole();renderAll();showToast('初期状態に戻しました');return;
+        localStorage.removeItem('maneko-help-dismissed');state=initialState();closeSheet();closeRole();renderAll();showToast('初期状態に戻しました');return;
       }
     }
     if(e.target === $('#modal-layer')) closeSheet();
