@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f8f5f0">
+  <title>maneko — Post Onboarding Interactive Mock</title>
+  <style>
+    :root {
+      --bg:#f8f5f0;
+      --surface:#fffefa;
+      --surface-2:#f1ece6;
+      --ink:#262321;
+      --muted:#77706a;
+      --muted-2:#9a918a;
+      --line:#e8e2db;
+      --dark:#262321;
+      --warm:#f1e8de;
+      --green:#e4e9e2;
+      --nav:#fbf8f4ee;
+      --shadow:0 14px 34px rgba(38,35,33,.12);
+      --radius-xl:30px;
+      --radius-lg:24px;
+      --radius-md:18px;
+      --safe-bottom:max(14px,env(safe-area-inset-bottom));
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#ded9d2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Hiragino Sans","Noto Sans JP",sans-serif}
+    button,input,textarea{font:inherit}
+    button{color:inherit}
+    body{display:flex;align-items:center;justify-content:center;padding:20px}
+    .phone{position:relative;width:min(430px,100%);height:min(900px,calc(100dvh - 40px));min-height:680px;background:var(--bg);border-radius:42px;overflow:hidden;box-shadow:0 24px 70px rgba(38,35,33,.20);border:1px solid rgba(38,35,33,.08)}
+    .app{height:100%;overflow:auto;padding:22px 20px 112px;scrollbar-width:none}
+    .app::-webkit-scrollbar{display:none}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+    .brand{font-size:22px;font-weight:850;letter-spacing:-.7px}
+    .avatar,.icon-button{width:38px;height:38px;border:0;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+    .avatar{background:linear-gradient(135deg,#d8c6b5,#afa39a);color:white;font-weight:800}
+    .icon-button{background:transparent;font-size:20px}
+    .greeting{font-size:15px;font-weight:650;color:var(--muted);margin-bottom:5px}
+    h1{font-size:31px;line-height:1.18;letter-spacing:-1px;margin:0 0 22px}
+    h2{font-size:22px;line-height:1.3;letter-spacing:-.5px;margin:0}
+    h3{font-size:18px;line-height:1.4;margin:0}
+    p{line-height:1.65}
+    .lead{margin:-14px 0 26px;color:var(--muted);font-size:16px}
+    .eyebrow{font-size:10px;letter-spacing:1.7px;font-weight:850;color:var(--muted-2);margin-bottom:5px}
+    .section-title{margin:28px 0 12px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px}
+    .dark-card{background:var(--dark);color:white;border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow)}
+    .dark-card .sub{color:#beb6af}
+    .card-title{font-size:21px;line-height:1.45;font-weight:800;letter-spacing:-.4px}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.10);font-size:12px;font-weight:750;color:#e8e1db}
+    .metric{background:var(--surface-2);color:var(--ink);font-size:12px}
+    .row{display:flex;align-items:center;gap:14px}
+    .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .stack{display:flex;flex-direction:column;gap:12px}
+    .icon-badge{width:42px;height:42px;flex:0 0 auto;border-radius:14px;background:#f0ebe5;display:grid;place-items:center;font-size:20px}
+    .primary{width:100%;border:0;border-radius:18px;background:white;color:var(--ink);font-weight:800;padding:16px 18px;cursor:pointer;margin-top:24px}
+    .filled{width:100%;border:0;border-radius:18px;background:var(--dark);color:white;font-weight:800;padding:15px 18px;cursor:pointer}
+    .tonal{border:0;border-radius:16px;background:#eee7df;font-weight:800;padding:12px 15px;cursor:pointer}
+    .text-btn{border:0;background:transparent;font-weight:780;padding:10px 0;cursor:pointer}
+    .link-row{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;padding:0;margin-top:14px;font-weight:800;cursor:pointer}
+    .search{width:100%;border:0;border-radius:18px;background:#f1eee9;padding:15px 16px;color:var(--muted);text-align:left;cursor:pointer;font-size:15px}
+    .role-card{cursor:pointer;transition:transform .14s ease,box-shadow .14s ease}
+    .role-card:active{transform:scale(.99)}
+    .role-avatar{width:52px;height:52px;flex:0 0 auto;border-radius:18px;background:linear-gradient(135deg,#e7ddd2,#d4ddd5);display:grid;place-items:center;font-size:20px;font-weight:850}
+    .role-desc{color:#665f59;margin:15px 0 10px;font-size:14px;line-height:1.55}
+    .small{font-size:12px;color:var(--muted)}
+    .strong-small{font-size:12px;font-weight:800}
+    .gradient{background:linear-gradient(135deg,var(--warm),var(--green));border:0}
+    .empty{color:#6e6761;line-height:1.65}
+    .tabs{position:absolute;left:16px;right:16px;bottom:var(--safe-bottom);height:72px;border:1px solid #e6e0d7;border-radius:28px;background:var(--nav);backdrop-filter:blur(18px);box-shadow:0 8px 28px rgba(0,0,0,.08);display:grid;grid-template-columns:repeat(3,1fr);padding:6px;z-index:20}
+    .tab{border:0;background:transparent;border-radius:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;color:#8c837c;cursor:pointer;font-size:11px;font-weight:700}
+    .tab .tab-icon{font-size:18px;line-height:1}
+    .tab.active{background:#e7ded2;color:var(--ink)}
+    .screen{display:none;animation:fade .18s ease}
+    .screen.active{display:block}
+    @keyframes fade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+    .settings-row{width:100%;padding:16px 0;border:0;border-bottom:1px solid var(--line);background:transparent;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer}
+    .settings-row:last-child{border-bottom:0}
+    .settings-row .grow{flex:1}
+    .detail-view{display:none;position:absolute;inset:0;background:var(--bg);z-index:30;overflow:auto;padding:18px 20px 42px;scrollbar-width:none}
+    .detail-view.active{display:block}
+    .back{width:40px;height:40px;border:0;background:transparent;border-radius:50%;font-size:24px;cursor:pointer;margin-bottom:12px}
+    .detail-hero{width:74px;height:74px;border-radius:24px;background:linear-gradient(135deg,#e7ddd2,#d4ddd5);display:grid;place-items:center;font-size:28px;font-weight:850;margin:4px 0 18px}
+    .modal-layer{position:absolute;inset:0;background:rgba(38,35,33,.28);z-index:60;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
+    .modal-layer.open{display:flex}
+    .sheet{width:100%;max-height:87%;overflow:auto;background:#fbfaf8;border-radius:28px 28px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px rgba(38,35,33,.18);animation:up .22s ease}
+    @keyframes up{from{transform:translateY(22px);opacity:.4}to{transform:none;opacity:1}}
+    .handle{width:40px;height:5px;border-radius:999px;background:#d5cec7;margin:0 auto 18px}
+    .sheet h2{font-size:26px;margin-bottom:8px}
+    .sheet .hint{background:#f0ece7;border-radius:16px;padding:14px;color:#665f59;line-height:1.55;margin:14px 0 20px}
+    .field{width:100%;border:1px solid #ddd5cd;border-radius:16px;background:white;padding:14px 15px;outline:none;margin:8px 0 12px;resize:vertical}
+    .field:focus{border-color:#8f8378;box-shadow:0 0 0 3px rgba(143,131,120,.10)}
+    .choice-wrap{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 16px}
+    .choice{border:1px solid #ddd5cd;background:#fff;border-radius:999px;padding:10px 13px;cursor:pointer;font-size:13px;font-weight:720}
+    .choice.selected{background:var(--dark);border-color:var(--dark);color:white}
+    .toast{position:absolute;left:22px;right:22px;bottom:102px;z-index:90;background:#262321;color:white;padding:13px 16px;border-radius:16px;font-size:13px;font-weight:700;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}
+    .toast.show{opacity:1;transform:none}
+    .dev-note{position:absolute;right:12px;top:12px;z-index:110;font-size:10px;padding:5px 8px;background:#ffffffcc;border:1px solid #ddd5cd;border-radius:999px;color:#77706a;pointer-events:none}
+    .divider{height:1px;background:var(--line);margin:18px 0}
+    .result-summary{padding:12px 14px;border-radius:16px;background:#eee8e1;font-size:13px;font-weight:700;margin-top:14px}
+    @media(max-width:520px){body{padding:0;background:var(--bg)}.phone{width:100%;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}.dev-note{display:none}.app{padding-top:max(18px,env(safe-area-inset-top))}.detail-view{padding-top:max(16px,env(safe-area-inset-top))}}
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="maneko interactive mock">
+    <div class="dev-note">INTERACTIVE HTML MOCK</div>
+    <div class="app" id="app-scroll">
+      <section class="screen active" data-screen="today" id="screen-today"></section>
+      <section class="screen" data-screen="models" id="screen-models"></section>
+      <section class="screen" data-screen="me" id="screen-me"></section>
+    </div>
+
+    <nav class="tabs" aria-label="メインナビゲーション">
+      <button class="tab active" data-tab="today"><span class="tab-icon">☀︎</span><span>今日</span></button>
+      <button class="tab" data-tab="models"><span class="tab-icon">✦</span><span>お手本</span></button>
+      <button class="tab" data-tab="me"><span class="tab-icon">◉</span><span>わたし</span></button>
+    </nav>
+
+    <section class="detail-view" id="detail-view" aria-label="お手本詳細"></section>
+    <div class="modal-layer" id="modal-layer" role="presentation"><div class="sheet" id="sheet"></div></div>
+    <div class="toast" id="toast"></div>
+  </main>
+
+<script>
+(() => {
+  const initialState = () => ({
+    tab: 'today',
+    aspiration: {
+      title: '忙しくても、重要なことから進められる人',
+      detail: '仕事が重なると、何から手を付けるか迷う'
+    },
+    trial: {
+      text: '仕事を始める前に、今日一番重要なことを1つ書く',
+      context: '次に仕事を始めるとき',
+      roleName: '未来の自分'
+    },
+    logs: [],
+    adaptations: [],
+    selectedResult: null,
+    roleModels: [
+      {
+        id:'future-self', name:'未来の自分', kind:'未来の自分', official:false,
+        description:'忙しい日でも、重要なことを見失わずに動ける自分を、お手本として具体化します。',
+        focus:'重要なことを先に決めるところ',
+        focusReason:'判断を後回しにせず、始める前に優先順位を1つだけ決める。',
+        wayTitle:'最初に試すこと',
+        way:'仕事を始める前に、今日一番重要なことを1つ書く'
+      },
+      {
+        id:'official', name:'maneko編集部のお手本', kind:'manekoのお手本', official:true,
+        description:'実践を止めないことより、止まったあとに戻りやすくする考え方のお手本です。',
+        focus:'完璧より、再開しやすさを大事にするところ',
+        focusReason:'一度できなかったことを失敗にせず、次の一歩を小さくする。',
+        wayTitle:'続かなかった日は最小版に戻す',
+        way:'止まった翌日は、元の量ではなく「5分だけ」など最小版から再開する。'
+      }
+    ]
+  });
+
+  let state = initialState();
+  const $ = (q, root=document) => root.querySelector(q);
+  const $$ = (q, root=document) => [...root.querySelectorAll(q)];
+  const esc = (s='') => String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+  function greeting(){
+    const h = new Date().getHours();
+    return h < 11 ? 'おはようございます' : h < 18 ? 'こんにちは' : 'こんばんは';
+  }
+
+  function topbar(settings=false){
+    return `<div class="topbar"><div class="brand">maneko</div>${settings
+      ? `<button class="icon-button" data-action="settings" aria-label="設定">⚙︎</button>`
+      : `<div class="avatar" aria-hidden="true">M</div>`}</div>`;
+  }
+
+  function sectionTitle(eyebrow,title){
+    return `<div class="section-title"><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(title)}</h2></div>`;
+  }
+
+  function renderToday(){
+    const completed = state.logs.length > 0;
+    const learned = state.adaptations.length > 0;
+    $('#screen-today').innerHTML = `
+      ${topbar(false)}
+      <div class="greeting">${greeting()}</div>
+      <h1>${completed ? '今日も、少しだけ。' : '今日、ひとつ試してみる'}</h1>
+      <article class="dark-card">
+        <div class="row-between">
+          <span class="pill">${esc(state.trial.context)}</span>
+          <button class="icon-button" style="color:#d5ccc4" data-action="trial-detail" aria-label="詳細">•••</button>
+        </div>
+        <div class="card-title" style="font-size:25px;margin-top:18px">${esc(state.trial.text)}</div>
+        <p class="sub" style="margin:10px 0 0">${esc(state.trial.roleName)} のやり方を参考にしています</p>
+        <button class="primary" data-action="record">${completed ? '✓ 今日の記録を見る' : '▶ やってみる'}</button>
+      </article>
+
+      ${sectionTitle('WHY THIS','これを試している理由')}
+      <article class="card row" style="align-items:flex-start">
+        <div class="icon-badge">⚑</div>
+        <div><h3>${esc(state.aspiration.title)}</h3><p class="small" style="font-size:14px;margin:6px 0 0">${esc(state.aspiration.detail)}</p></div>
+      </article>
+
+      ${sectionTitle(completed ? 'LEARNING' : 'NEXT', completed ? 'manekoが気づいたこと' : '迷わないための小さなヒント')}
+      <article class="card">
+        <div class="icon-badge">${completed ? '↗' : '◌'}</div>
+        <h3 style="margin-top:14px">${completed ? (learned ? '少し自分向けになってきました' : '行動できたタイミングを残してみましょう') : '完璧にやる必要はありません'}</h3>
+        <p class="empty" style="margin-bottom:0">${completed
+          ? (learned ? '変更した内容は履歴に残っています。次は、前より自然にできたかを見ていきます。' : '「できた／できなかった」より、いつなら自然にできたかが次の調整に役立ちます。')
+          : 'まず一度だけ試して、自分に合うか確かめます。合わなければ、やり方を変えて構いません。'}</p>
+        <button class="link-row" data-action="${completed ? 'adapt' : 'go-models'}">${completed ? '自分に合わせる' : '別のお手本も見る'} <span>→</span></button>
+      </article>
+      ${completed ? `<div class="result-summary">直近の記録：${esc(resultLabel(state.logs.at(-1).result))}${state.logs.at(-1).note ? ` — ${esc(state.logs.at(-1).note)}` : ''}</div>` : ''}
+    `;
+  }
+
+  function roleCard(role){
+    return `<article class="card role-card" data-role-id="${esc(role.id)}">
+      <div class="row">
+        <div class="role-avatar">${esc(role.name.slice(0,1))}</div>
+        <div style="flex:1;min-width:0"><h3>${esc(role.name)} ${role.official ? '<span title="公式">✓</span>' : ''}</h3><div class="small" style="margin-top:3px">${esc(role.kind)}</div></div>
+        <div style="font-size:22px">›</div>
+      </div>
+      <div class="role-desc">${esc(role.description)}</div>
+      <div class="strong-small">1個の「ここをまねしたい」</div>
+    </article>`;
+  }
+
+  function renderModels(){
+    $('#screen-models').innerHTML = `
+      ${topbar(false)}
+      <h1>お手本</h1>
+      <p class="lead">「${esc(state.aspiration.title)}」に近づくヒントを集めました。</p>
+      <button class="search" data-action="search">⌕　人・習慣・考え方を探す</button>
+      ${sectionTitle('FOR YOU','いまのあなたに合いそう')}
+      <div class="stack">${state.roleModels.map(roleCard).join('')}</div>
+      <article class="card row" style="margin-top:14px;cursor:pointer" data-action="add-role">
+        <div class="icon-badge">＋</div>
+        <div style="flex:1"><h3>自分でお手本を追加</h3><p class="small" style="font-size:14px;margin:4px 0 0">身近な人、作品のキャラクター、未来の自分でも構いません。</p></div>
+        <div style="font-size:22px">›</div>
+      </article>`;
+  }
+
+  function renderMe(){
+    const logs = state.logs.length;
+    const adapts = state.adaptations.length;
+    $('#screen-me').innerHTML = `
+      ${topbar(true)}
+      <h1>わたし</h1>
+      <p class="lead">回数ではなく、自分に合ってきたものを残します。</p>
+      ${sectionTitle('DIRECTION','なりたい姿')}
+      <article class="card gradient">
+        <div style="font-size:28px">↗</div>
+        <h3 style="font-size:22px;margin-top:22px">${esc(state.aspiration.title)}</h3>
+        <p class="small" style="font-size:14px;margin:8px 0 0;color:#625b54">${esc(state.aspiration.detail)}</p>
+        <button class="link-row" data-action="edit-aspiration">編集 →</button>
+      </article>
+      ${sectionTitle('IN PROGRESS','いま試していること')}
+      <article class="card">
+        <h3>${esc(state.trial.text)}</h3>
+        <div class="choice-wrap" style="margin-bottom:0">
+          <span class="pill metric">試した　${logs}回</span>
+          <span class="pill metric">調整した　${adapts}回</span>
+        </div>
+      </article>
+      ${sectionTitle('MY WAY','自分に合ってきたこと')}
+      ${adapts === 0 ? `
+        <article class="card row" style="align-items:flex-start"><div class="icon-badge">♧</div><div class="empty">まだありません。試して、少し変えて、しっくりきたものがここに残っていきます。</div></article>`
+        : state.adaptations.slice().reverse().map(a => `<article class="card row" style="align-items:flex-start;margin-bottom:10px"><div style="font-size:20px">◯</div><div><h3>${esc(a.after)}</h3><p class="small" style="font-size:14px;margin:4px 0 0">${esc(a.reason || '試しながら、自分向けに変更しました。')}</p></div></article>`).join('')}
+    `;
+  }
+
+  function renderAll(){
+    renderToday(); renderModels(); renderMe();
+    $$('.screen').forEach(el => el.classList.toggle('active', el.dataset.screen === state.tab));
+    $$('.tab').forEach(el => el.classList.toggle('active', el.dataset.tab === state.tab));
+  }
+
+  function setTab(tab){
+    state.tab = tab;
+    renderAll();
+    $('#app-scroll').scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function openSheet(html){
+    $('#sheet').innerHTML = `<div class="handle"></div>${html}`;
+    $('#modal-layer').classList.add('open');
+  }
+  function closeSheet(){ $('#modal-layer').classList.remove('open'); }
+  function showToast(text){
+    const t=$('#toast'); t.textContent=text; t.classList.add('show');
+    clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>t.classList.remove('show'),1800);
+  }
+  function resultLabel(v){ return ({done:'できた',partial:'少しできた',skipped:'今日はしなかった',notSuitable:'合わなかった'})[v] || v; }
+
+  function trialDetail(){
+    openSheet(`<h2>今日やってみる</h2>
+      <h3>${esc(state.trial.text)}</h3>
+      <div class="hint">◷ ${esc(state.trial.context)}<br><br>まず一度だけ。合わなければ、あとで変更できます。</div>
+      <button class="filled" data-sheet-action="record">▶ やってみる</button>
+      <button class="text-btn" style="width:100%;margin-top:7px" data-sheet-action="adapt">少し変える</button>`);
+  }
+
+  function recordSheet(){
+    const last=state.logs.at(-1);
+    if(last){
+      openSheet(`<h2>今日の記録</h2><p class="small" style="font-size:14px">${esc(state.trial.text)}</p>
+        <div class="result-summary" style="margin:18px 0">${esc(resultLabel(last.result))}${last.note?`<br><span style="font-weight:500">${esc(last.note)}</span>`:''}</div>
+        <button class="filled" data-sheet-action="record-again">もう一度記録する</button>`);
+      return;
+    }
+    state.selectedResult=null;
+    openRecordForm();
+  }
+
+  function openRecordForm(){
+    openSheet(`<h2>今、どうでしたか？</h2><p class="small" style="font-size:14px">${esc(state.trial.text)}</p>
+      <div class="choice-wrap">
+        ${[['done','できた'],['partial','少しできた'],['skipped','今日はしなかった'],['notSuitable','合わなかった']].map(([v,l])=>`<button class="choice" data-result="${v}">${l}</button>`).join('')}
+      </div>
+      <textarea class="field" id="practice-note" rows="3" placeholder="ひとこと（任意） 例：内容は良かったけど、起きてすぐは忘れた"></textarea>
+      <button class="filled" id="save-practice" data-sheet-action="save-practice" disabled style="opacity:.45">記録する</button>`);
+  }
+
+  function adjustmentSheet(){
+    openSheet(`<div class="icon-badge">≋</div><h2 style="margin-top:16px">少し変えてみますか？</h2>
+      <p class="empty">うまくできなかった日は、続けるかやめるかではなく、やり方を小さく調整できます。</p>
+      <button class="filled" data-sheet-action="adapt">次に試す形を変える</button>
+      <button class="text-btn" style="width:100%;margin-top:7px" data-sheet-action="close">今はそのまま</button>`);
+  }
+
+  function adaptSheet(){
+    openSheet(`<h2>自分に合わせる</h2><p class="small" style="font-size:14px">元の形は残るので、気軽に変えられます。</p>
+      <label class="small">次に試す形</label>
+      <textarea class="field" id="adapt-text" rows="4">${esc(state.trial.text)}</textarea>
+      <label class="small">なぜ変える？（任意）</label>
+      <input class="field" id="adapt-reason" placeholder="例：朝より仕事開始直前の方が自然だった">
+      <button class="filled" data-sheet-action="save-adapt">この形で次に試す</button>`);
+  }
+
+  function searchSheet(){
+    openSheet(`<h2>お手本を探す</h2><input class="field" autofocus placeholder="例：朝を整えたい、集中できる人">
+      <p class="small" style="font-size:14px">検索結果は、このHTMLモックでは既存のお手本を使います。</p>`);
+    setTimeout(()=>$('#sheet input')?.focus(),80);
+  }
+
+  function settingsSheet(){
+    openSheet(`<h2>設定</h2>
+      <button class="settings-row"><span>◌</span><span class="grow"><b>リマインド</b></span><span>›</span></button>
+      <button class="settings-row"><span>◎</span><span class="grow"><b>言語</b><br><span class="small">日本語</span></span><span>›</span></button>
+      <button class="settings-row" data-sheet-action="reset"><span>↻</span><span class="grow"><b>モックを初期状態に戻す</b></span></button>`);
+  }
+
+  function addRoleSheet(){
+    openSheet(`<h2>自分でお手本を追加</h2><p class="empty">身近な人、作品のキャラクター、未来の自分など、誰の「どこ」を借りたいかを登録します。</p>
+      <input class="field" id="new-role-name" placeholder="例：先輩の佐藤さん">
+      <input class="field" id="new-role-focus" placeholder="例：話す前に一度整理するところ">
+      <button class="filled" data-sheet-action="save-role">追加する</button>`);
+  }
+
+  function aspirationSheet(){
+    openSheet(`<h2>なりたい姿を編集</h2>
+      <input class="field" id="asp-title" value="${esc(state.aspiration.title)}">
+      <textarea class="field" id="asp-detail" rows="3">${esc(state.aspiration.detail)}</textarea>
+      <button class="filled" data-sheet-action="save-aspiration">保存する</button>`);
+  }
+
+  function openRole(id){
+    const role=state.roleModels.find(r=>r.id===id); if(!role)return;
+    const active = state.trial.text === role.way;
+    const view=$('#detail-view');
+    view.innerHTML=`<button class="back" data-detail-action="back" aria-label="戻る">‹</button>
+      <div class="detail-hero">${esc(role.name.slice(0,1))}</div>
+      <h1 style="margin-bottom:7px">${esc(role.name)} ${role.official?'✓':''}</h1>
+      <p class="lead" style="margin:0 0 28px">${esc(role.description)}</p>
+      ${sectionTitle('BORROW THIS','この人の、ここを借りる')}
+      <article class="card gradient"><h3>${esc(role.focus)}</h3><p class="small" style="font-size:14px;color:#665f59;margin-bottom:0">${esc(role.focusReason)}</p></article>
+      ${sectionTitle('HOW','今日から試せるやり方')}
+      <article class="card"><h3>${esc(role.wayTitle)}</h3><p class="role-desc">${esc(role.way)}</p>
+        <button class="tonal" data-detail-action="try" data-role-id="${esc(role.id)}">${active?'✓ いま試しています':'▶ これを試してみる'}</button>
+      </article>`;
+    view.classList.add('active');
+    view.scrollTop=0;
+  }
+  function closeRole(){ $('#detail-view').classList.remove('active'); }
+
+  document.addEventListener('click', e => {
+    const tab=e.target.closest('[data-tab]'); if(tab){setTab(tab.dataset.tab);return;}
+    const role=e.target.closest('[data-role-id].role-card'); if(role){openRole(role.dataset.roleId);return;}
+    const detail=e.target.closest('[data-detail-action]');
+    if(detail){
+      if(detail.dataset.detailAction==='back') closeRole();
+      if(detail.dataset.detailAction==='try'){
+        const r=state.roleModels.find(x=>x.id===detail.dataset.roleId);
+        if(r){state.trial.text=r.way;state.trial.roleName=r.name;closeRole();setTab('today');showToast('「今日」に追加しました');}
+      }
+      return;
+    }
+    const action=e.target.closest('[data-action]')?.dataset.action;
+    if(action){
+      ({'trial-detail':trialDetail,'record':recordSheet,'adapt':adaptSheet,'go-models':()=>setTab('models'),'search':searchSheet,'settings':settingsSheet,'add-role':addRoleSheet,'edit-aspiration':aspirationSheet}[action]||(()=>{}))();
+      return;
+    }
+    const result=e.target.closest('[data-result]');
+    if(result){
+      state.selectedResult=result.dataset.result;
+      $$('.choice[data-result]','#sheet').forEach(b=>b.classList.toggle('selected',b.dataset.result===state.selectedResult));
+      const save=$('#save-practice'); if(save){save.disabled=false;save.style.opacity='1';}
+      return;
+    }
+    const sheetAction=e.target.closest('[data-sheet-action]')?.dataset.sheetAction;
+    if(sheetAction){
+      if(sheetAction==='close'){closeSheet();return;}
+      if(sheetAction==='record'||sheetAction==='record-again'){closeSheet();setTimeout(openRecordForm,80);return;}
+      if(sheetAction==='adapt'){closeSheet();setTimeout(adaptSheet,80);return;}
+      if(sheetAction==='save-practice'){
+        if(!state.selectedResult)return;
+        const note=$('#practice-note')?.value.trim()||'';
+        const result=state.selectedResult;
+        state.logs.push({result,note,at:new Date().toISOString()});
+        closeSheet();renderAll();showToast('今日の記録を残しました');
+        if(result==='partial'||result==='notSuitable')setTimeout(adjustmentSheet,260);
+        return;
+      }
+      if(sheetAction==='save-adapt'){
+        const after=$('#adapt-text')?.value.trim(); if(!after)return;
+        const before=state.trial.text; const reason=$('#adapt-reason')?.value.trim()||'';
+        state.adaptations.push({before,after,reason}); state.trial.text=after;
+        closeSheet();renderAll();showToast('次に試す形を更新しました');return;
+      }
+      if(sheetAction==='save-role'){
+        const name=$('#new-role-name')?.value.trim(); const focus=$('#new-role-focus')?.value.trim(); if(!name||!focus){showToast('名前と、まねしたい点を入力してください');return;}
+        state.roleModels.push({id:'custom-'+Date.now(),name,kind:'自分で作ったお手本',official:false,description:'あなたが追加したお手本です。',focus,focusReason:'自分が良いと感じた具体的な点。',wayTitle:'まず小さく試す',way:`${focus}を、次の機会に一度だけ意識してみる`});
+        closeSheet();renderAll();showToast('お手本を追加しました');return;
+      }
+      if(sheetAction==='save-aspiration'){
+        const title=$('#asp-title')?.value.trim(); if(!title)return;
+        state.aspiration.title=title; state.aspiration.detail=$('#asp-detail')?.value.trim()||'';
+        closeSheet();renderAll();showToast('なりたい姿を更新しました');return;
+      }
+      if(sheetAction==='reset'){
+        state=initialState();closeSheet();closeRole();renderAll();showToast('初期状態に戻しました');return;
+      }
+    }
+    if(e.target === $('#modal-layer')) closeSheet();
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
